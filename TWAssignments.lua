@@ -669,6 +669,10 @@ function TWA.change(xy, to, sender, dontOpenDropdown)
     local x = math.floor(xy / 100)
     local y = xy - x * 100
 
+    if not TWA.data[x] then
+        TWA.AddLine()
+    end
+
     if to ~= 'Clear' then
         TWA.data[x][y] = to
     else
