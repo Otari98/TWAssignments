@@ -12,7 +12,7 @@ TWA.currentRow = 0
 TWA.currentCell = 0
 
 local function twaprint(a)
-    DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWA] |cffffffff" .. tostring(a))
+    DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWA]|r " .. tostring(a))
 end
 
 local function twadebug(...)
@@ -484,9 +484,9 @@ function TWA.CHAT_MSG_WHISPER()
         end
     end
     if lineToSend == '' then
-        ChatThrottleLib:SendChatMessage("BULK", "TWA", 'You are not assigned.', "WHISPER", "Common", arg2);
+        SendChatMessage("You are not assigned.", "WHISPER", nil, arg2)
     else
-        ChatThrottleLib:SendChatMessage("BULK", "TWA", lineToSend, "WHISPER", "Common", arg2);
+        SendChatMessage(lineToSend, "WHISPER", nil, arg2)
     end
 end
 
@@ -582,6 +582,7 @@ function TWA.handleSync(text)
     
     if string.find(text, 'AddLine', 1, true) then
         TWA.data[table.getn(TWA.data) + 1] = { '-', '-', '-', '-', '-', '-', '-' }
+        TWA.PopulateTWA()
         return
     end
 end
@@ -616,11 +617,11 @@ function TWA.handleQHSync(text, sender)
         end
     end
     roster = tanks .. ";" .. healers;
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWA", roster, "RAID") -- transmit roster
+    SendAddonMessage("TWA", roster, "RAID") -- transmit roster
 end
 
 function TWA.ChangeCellSend(xy, to)
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWA", "ChangeCell=" .. xy .. "=" .. to .. "=0", "RAID")
+    SendAddonMessage("TWA", "ChangeCell=" .. xy .. "=" .. to .. "=0", "RAID")
     CloseDropDownMenus()
 end
 
@@ -1123,7 +1124,7 @@ function TWA.AddLine_OnClick()
         twaprint("You need to be a raid leader or assistant to do that")
         return
     end
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWA", "AddLine", "RAID")
+    SendAddonMessage("TWA", "AddLine", "RAID")
 end
 
 function TWA.SpamRaid_OnClick()
@@ -1131,7 +1132,7 @@ function TWA.SpamRaid_OnClick()
         twaprint("You need to be a raid leader or assistant to do that")
         return
     end
-    ChatThrottleLib:SendChatMessage("BULK", "TWA", "======= RAID ASSIGNMENTS =======", "RAID_WARNING")
+    SendChatMessage("======= RAID ASSIGNMENTS =======", "RAID_WARNING")
 
     for _, data in pairs(TWA.data) do
 
@@ -1164,10 +1165,10 @@ function TWA.SpamRaid_OnClick()
         end
 
         if not dontPrintLine then
-            ChatThrottleLib:SendChatMessage("BULK", "TWA", line, "RAID")
+            SendChatMessage(line, "RAID")
         end
     end
-    ChatThrottleLib:SendChatMessage("BULK", "TWA", "Not assigned, heal the raid. Whisper me 'heal' if you forget your assignment.", "RAID")
+    SendChatMessage("Not assigned, heal the raid. Whisper me 'heal' if you forget your assignment.", "RAID")
 end
 
 function TWA.RemoveRow_OnClick(id)
@@ -1175,7 +1176,7 @@ function TWA.RemoveRow_OnClick(id)
         twaprint("You need to be a raid leader or assistant to do that")
         return
     end
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWA", "RemRow=" .. id, "RAID")
+    SendAddonMessage("TWA", "RemRow=" .. id, "RAID")
 end
 
 function TWA.Reset_OnClick()
@@ -1183,7 +1184,7 @@ function TWA.Reset_OnClick()
         twaprint("You need to be a raid leader or assistant to do that")
         return
     end
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWA", "Reset", "RAID")
+    SendAddonMessage("TWA", "Reset", "RAID")
 end
 
 local function buildTemplatesDropdown()
@@ -1524,7 +1525,7 @@ function TWA.SyncBW_OnClick()
         return
     end
    
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWABW", "BWSynch=start", "RAID")
+    SendAddonMessage("TWABW", "BWSynch=start", "RAID")
 
     for _, data in pairs(TWA.data) do
         local line = ''
@@ -1544,10 +1545,10 @@ function TWA.SyncBW_OnClick()
         end
 
         if not dontPrintLine then
-            ChatThrottleLib:SendAddonMessage("ALERT", "TWABW", "BWSynch=" .. line, "RAID")
+            SendAddonMessage("TWABW", "BWSynch=" .. line, "RAID")
         end
     end
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWABW", "BWSynch=end", "RAID")
+    SendAddonMessage("TWABW", "BWSynch=end", "RAID")
 end
 
 function TWA.loadTemplate(template, load)
@@ -1563,5 +1564,5 @@ function TWA.loadTemplate(template, load)
         TWA.loadedTemplate = template
         return true
     end
-    ChatThrottleLib:SendAddonMessage("ALERT", "TWA", "LoadTemplate=" .. template, "RAID")
+    SendAddonMessage("TWA", "LoadTemplate=" .. template, "RAID")
 end
