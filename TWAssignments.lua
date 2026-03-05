@@ -1127,7 +1127,7 @@ function TWA.AddLine_OnClick()
     SendAddonMessage("TWA", "AddLine", "RAID")
 end
 
-function TWA.SpamRaid_OnClick()
+function TWA.Announce_OnClick()
     if not (IsRaidLeader() or IsRaidOfficer()) then
         twaprint("You need to be a raid leader or assistant to do that")
         return
@@ -1517,38 +1517,6 @@ function TWA.SavePreset_OnClick()
     end
     TWA_PRESETS[TWA.loadedTemplate] = preset
     twaprint('Saved preset for |cff69ccf0' .. TWA.loadedTemplate)
-end
-
-function TWA.SyncBW_OnClick()
-    if not (IsRaidLeader() or IsRaidOfficer()) then
-        twaprint("You need to be a raid leader or assistant to do that")
-        return
-    end
-   
-    SendAddonMessage("TWABW", "BWSynch=start", "RAID")
-
-    for _, data in pairs(TWA.data) do
-        local line = ''
-        local dontPrintLine = true
-        for i, name in data do
-            dontPrintLine = dontPrintLine and name == '-'
-            local separator = ''
-            if i == 1 then separator = ' : ' end
-            if i == 4 then separator = ' || Healers: ' end
-            if name == '-' then name = '' end
-
-            if TWA.loadedTemplate == '4h' then
-                if name ~= '' and i >= 5 then  name = '[' .. i - 4 .. ']' .. name end
-            end
-
-            line = line .. name .. ' ' .. separator
-        end
-
-        if not dontPrintLine then
-            SendAddonMessage("TWABW", "BWSynch=" .. line, "RAID")
-        end
-    end
-    SendAddonMessage("TWABW", "BWSynch=end", "RAID")
 end
 
 function TWA.loadTemplate(template, load)

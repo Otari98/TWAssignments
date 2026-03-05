@@ -203,30 +203,16 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentSpamRaid" inherits="UIPanelButtonTemplate2" text="= Spam Raid = ">
-                <Size x="100" y="20"/>
+            <Button name="$parentAnnounce" inherits="UIPanelButtonTemplate2" text="Announce">
+                <Size x="120" y="20"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
-                        <Offset x="40" y="-5"/>
+                        <Offset x="85" y="-5"/>
                     </Anchor>
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        TWA.SpamRaid_OnClick()
-                        CloseDropDownMenus()
-                    </OnClick>
-                </Scripts>
-            </Button>
-            <Button name="$parentSyncBW" inherits="UIPanelButtonTemplate2" text="Sync BW">
-                <Size x="80" y="20"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset x="150" y="-5"/>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        TWA.SyncBW_OnClick()
+                        TWA.Announce_OnClick()
                         CloseDropDownMenus()
                     </OnClick>
                 </Scripts>
