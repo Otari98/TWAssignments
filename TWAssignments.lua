@@ -505,10 +505,9 @@ function TWA.fillRaidData()
     twadebug('fill raid data')
     for k in pairs(TWA.raid) do wipe(TWA.raid[k]) end
     for i = 1, GetNumRaidMembers() do
-        local name = GetRaidRosterInfo(i)
-        if name then
-            local _, class = UnitClass('raid' .. i)
-            table.insert(TWA.raid[class], name)
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(i)
+        if name and fileName then
+            table.insert(TWA.raid[fileName], name)
         end
     end
     for k in pairs(TWA.raid) do table.sort(TWA.raid[k]) end
@@ -1127,48 +1126,56 @@ function TWA.AddLine_OnClick()
     SendAddonMessage("TWA", "AddLine", "RAID")
 end
 
+local function GetPlayerLink(player)
+    for i = 1, GetNumRaidMembers() do
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead = GetRaidRosterInfo(i)
+        if name == player then
+            local color = TWA.classColors[fileName] and TWA.classColors[fileName].c or TWA.classColors["PRIEST"].c
+            return string.format("%s|Hplayer:%s|h%s|h|r", color, name, name)
+        end
+    end
+    return string.format("%s|Hplayer:%s|h%s|h|r", "|cffaaaaaa", player, player)
+end
+
+local messages = {}
 function TWA.Announce_OnClick()
     if not (IsRaidLeader() or IsRaidOfficer()) then
         twaprint("You need to be a raid leader or assistant to do that")
         return
     end
-    SendChatMessage("======= RAID ASSIGNMENTS =======", "RAID_WARNING")
 
-    for _, data in pairs(TWA.data) do
+    wipe(messages)
+    table.insert(messages, "======= RAID ASSIGNMENTS =======@RAID_WARNING")
 
-        local line = ''
-        local dontPrintLine = true
-        for i, name in data do
-            if i > 1 then
-                dontPrintLine = dontPrintLine and name == '-'
+    for row, data in pairs(TWA.data) do
+        local msg = ''
+        local target = data[1]
+        local tank1, tank2, tank3 = data[2], data[3], data[4]
+        local healer1, healer2, healer3 = data[5], data[6], data[7]
+        if tank1 ~= "-" or tank2 ~= "-" or tank3 ~= "-" then
+            msg = target..":"
+            if tank1 ~= "-" then msg = msg.." "..GetPlayerLink(tank1) end
+            if tank2 ~= "-" then msg = msg.." "..GetPlayerLink(tank2) end
+            if tank3 ~= "-" then msg = msg.." "..GetPlayerLink(tank3) end
+            if healer1 ~= "-" or healer2 ~= "-" or healer3 ~= "-" then
+                msg = msg.." || Healers:"
+                if healer1 ~= "-" then msg = msg.." "..GetPlayerLink(healer1) end
+                if healer2 ~= "-" then msg = msg.." "..GetPlayerLink(healer2) end
+                if healer3 ~= "-" then msg = msg.." "..GetPlayerLink(healer3) end
             end
-
-            local separator = ''
-            if i == 1 then
-                separator = ' : '
-            end
-            if i == 4 then
-                separator = ' || Healers: '
-            end
-
-            if name == '-' then
-                name = ''
-            end
-
-            if TWA.loadedTemplate == '4h' then
-                if name ~= '' and i >= 5 then
-                    name = '[' .. i - 4 .. ']' .. name
-                end
-            end
-
-            line = line .. name .. ' ' .. separator
         end
-
-        if not dontPrintLine then
-            SendChatMessage(line, "RAID")
+        if msg ~= "" then
+            table.insert(messages, string.format("%s@%s", msg, "RAID"))
         end
     end
-    SendChatMessage("Not assigned, heal the raid. Whisper me 'heal' if you forget your assignment.", "RAID")
+    local numMessages = table.getn(messages)
+    if numMessages > 1 then
+        for i = 1, numMessages do
+            local _, _, text, channel = string.find(messages[i], "(.+)@(.+)")
+            if text and channel then SendChatMessage(text, channel) end
+        end
+    end
+    -- SendChatMessage("Not assigned, heal the raid. Whisper me 'heal' if you forget your assignment.", "RAID")
 end
 
 function TWA.RemoveRow_OnClick(id)
