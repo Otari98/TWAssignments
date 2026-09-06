@@ -203,11 +203,27 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentAnnounce" inherits="UIPanelButtonTemplate2" text="Announce">
-                <Size x="120" y="20"/>
+            <Button name="$parentReadyCheck" inherits="UIPanelButtonTemplate2" text="READY_CHECK">
+                <Size x="100" y="20"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
-                        <Offset x="85" y="-5"/>
+                        <Offset x="45" y="-5"/>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        if IsRaidLeader() and GetNumRaidMembers() > 0 then
+                            DoReadyCheck()
+                        end
+                        CloseDropDownMenus()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentAnnounce" inherits="UIPanelButtonTemplate2" text="Announce">
+                <Size x="100" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="145" y="-5"/>
                     </Anchor>
                 </Anchors>
                 <Scripts>
