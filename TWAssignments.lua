@@ -1477,21 +1477,22 @@ function TWA.LoadPreset_OnClick()
     end
     
     if not TWA.loadedTemplate then
-        twaprint('Please load a template first.')
+        twaprint("Please select template first.")
         return
     end
     
     TWA.loadTemplate(TWA.loadedTemplate)
+    local savedTemplate = TWA_PRESETS[TWA.loadedTemplate]
 
-    if not TWA_PRESETS[TWA.loadedTemplate] then
+    if not savedTemplate then
         twaprint('No preset saved for |cff69ccf0' .. TWA.loadedTemplate)
         return
     end
 
-    for index, data in pairs(TWA_PRESETS[TWA.loadedTemplate]) do
-        for i, name in data do
-            if i ~= 1 and name ~= '-' then
-                TWA.ChangeCellSend(index * 100 + i, name)
+    for row, data in pairs(savedTemplate) do
+        for col, text in pairs(data) do
+            if text ~= '-' then
+                TWA.ChangeCellSend(row * 100 + col, text)
             end
         end
     end
@@ -1504,7 +1505,7 @@ function TWA.SavePreset_OnClick()
     end
    
     if not TWA.loadedTemplate then
-        twaprint('Please load a template first.')
+        twaprint('Please select template first.')
         return
     end
     
